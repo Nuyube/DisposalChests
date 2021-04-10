@@ -27,10 +27,9 @@ plugin = p;
     static Plugin plugin;
   @EventHandler
   public void onBlockPlaced(BlockPlaceEvent event) {
-      if(event.getPlayer().hasPermission("disposalchests.use")) {
-    BlockHandler(event.getBlock(), false);
-}
-else event.setCancelled(true);
+    if(event.getPlayer().hasPermission("disposalchests.use")) {
+      BlockHandler(event.getBlock(), false);
+    } 
   }
 
   private void BlockHandler(Block b, boolean Break) {

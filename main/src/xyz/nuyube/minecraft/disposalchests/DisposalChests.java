@@ -17,7 +17,7 @@ public class DisposalChests extends JavaPlugin {
     //Start our plugin logger
     PluginLogger = getLogger();
     //Check for updates
-    new UpdateChecker(this, 91103)
+    new UpdateChecker(this, 91132)
       .getVersion(
           version -> {
             if (
@@ -36,7 +36,7 @@ public class DisposalChests extends JavaPlugin {
     //Register our sellxp command and its alias 
     Bukkit.getPluginManager().registerEvents(new DisposalChestDiscoveryEventHandler(this), this);
     DisposalChestManager.Init(this);
-    DeletionTask = new DisposalChestDeletionEventHandler().runTaskTimer(this, 2, 2);
+    DeletionTask = new DisposalChestDeletionEventHandler().runTaskTimer(this, 20, 20);
   }
 BukkitTask DeletionTask = null;
   @Override

@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.bukkit.Nameable;
 import org.bukkit.block.Container;
+import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -68,22 +70,37 @@ public static void RemoveChestsFromChunk(Chunk c) {
           RemoveChest(chest);
           continue;
         }
-        Material M = Material.WRITABLE_BOOK;
-        ItemStack X = new ItemStack(M);
-        X.getItemMeta().setDisplayName("IMPORTANT NOTE");
+        
+        ItemStack itemStack;
+        ItemMeta itemMeta;
         List<String> Lore = new ArrayList<String>();
+
+        itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        itemMeta = itemStack.getItemMeta();
+
         Lore.add("THIS CHEST IS A DISPOSAL CHEST.");
         Lore.add("ALL ITEMS PLACED INTO IT ARE FORFEIT.");
-        X.getItemMeta().setLore(Lore);
-        X.setAmount(50);
-        
-        Container c = chest.getContainer();
-        Inventory xI = c.getInventory();
-        ItemStack[] NewItems = new ItemStack[xI.getSize()];
-        NewItems[NewItems.length / 2] = X;
-        xI.setContents(NewItems); 
-        
-        c.update(true, false);
+
+        itemMeta.setDisplayName("Warning!");
+        itemMeta.setLore(Lore);
+
+        itemStack.setItemMeta(itemMeta);
+
+        Container container;
+        Inventory inventory;
+        ItemStack[] item;
+
+        container = chest.getContainer();
+        inventory = container.getSnapshotInventory();
+
+        inventory.clear();
+        item = new ItemStack[container.getInventory().getSize()];
+        item[item.length / 2] = itemStack; 
+        //Tried inventory.setContents, inventory.clear + inventory.setItem, inventory.setStorageContents.
+        inventory.setStorageContents(item);
+
+        container.update(true, false);
+
       } catch (Exception e) {
         plugin.getLogger().info("Removing a chest because of " +e.getMessage());
         RemoveChest(chest);
