@@ -41,9 +41,13 @@ public class DisposalChestManager extends BukkitRunnable {
 
       chestLocation = chest.getLocation();
 
-      if (chestLocation.getLocation() == l) {
+      Location cL;
+
+      cL = chestLocation.getLocation();
+
+      if (l.getWorld().getName() == chestLocation.world && l.getBlockX() == cL.getBlockX()
+          && l.getBlockY() == cL.getBlockY() && l.getBlockZ() == cL.getBlockZ())
         return true;
-      }
 
     }
     return false;

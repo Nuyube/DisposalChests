@@ -9,9 +9,9 @@ class DisposalChestLocation {
   double z;
   String world;
 
-  public DisposalChestLocation(double X,double Y, double Z, String World) {
+  public DisposalChestLocation(double X, double Y, double Z, String World) {
     x = X;
-    y= Y;
+    y = Y;
     z = Z;
     world = World;
   }
@@ -22,7 +22,13 @@ class DisposalChestLocation {
     z = l.getZ();
     world = l.getWorld().getName();
   }
+
   public Location getLocation() {
     return new Location(Bukkit.getWorld(world), x, y, z);
+  }
+
+  @Override
+  public String toString() {
+    return world + " " + x + "," + y + "," + z;
   }
 }

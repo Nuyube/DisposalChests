@@ -23,9 +23,10 @@ public class DisposalChests extends JavaPlugin {
     Bukkit.getPluginManager().registerEvents(new WarningItemRemovalDenialEventHandler(), this);
     DisposalChestManager.init(this);
     DeletionTask = DisposalChestManager.getInstance().runTaskTimer(this, 20, 20);
+    DiscoveryTask =new LoadedChestDiscoverer().runTaskTimer(this, 200, 200);
   }
 
-  BukkitTask DeletionTask = null;
+  BukkitTask DeletionTask = null, DiscoveryTask = null;
 
   @Override
   // We don't actually do anything on disable.
