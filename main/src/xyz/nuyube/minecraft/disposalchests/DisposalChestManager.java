@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Nameable;
-import org.bukkit.block.Container;
+import org.bukkit.block.Container; 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.Inventory;
@@ -30,16 +30,16 @@ public class DisposalChestManager extends BukkitRunnable {
 
   }
 
-  static void Init(Plugin p) {
+  static void init(Plugin p) {
     plugin = p;
   }
 
-  public void AddChest(DisposalChest chest) {
+  public void addChest(DisposalChest chest) {
     plugin.getLogger().info("Adding new Disposal Chest at " + chest.getLocation().toString());
     Chests.add(chest);
   }
 
-  public void RemoveChestsFromChunk(Chunk c) {
+  public void removeChestsFromChunk(Chunk c) {
     int X = c.getX();
     int Z = c.getZ();
     for (int i = 0; i < Chests.size(); i++) {
@@ -48,12 +48,12 @@ public class DisposalChestManager extends BukkitRunnable {
       int oX = X * 16;
       int oZ = Z * 16;
       if (L.x >= oX && L.x <= oX + 16.0 && L.z >= oZ && L.z <= oZ + 16.0) {
-        RemoveChest(dc);
+        removeChest(dc);
       }
     }
   }
 
-  public void RemoveChest(DisposalChest chest) {
+  public void removeChest(DisposalChest chest) {
     plugin.getLogger().info("Removing Disposal Chest from " + chest.getLocation().toString());
     Chests.remove(chest);
   }
@@ -75,7 +75,7 @@ public class DisposalChestManager extends BukkitRunnable {
     itemMeta.setLore(lore);
 
     itemStack.setItemMeta(itemMeta);
-
+    
     // Destroy all items in Disposal Chests.
     for (int i = 0; i < Chests.size(); i++) {
       DisposalChest chest = Chests.get(i);
@@ -83,7 +83,7 @@ public class DisposalChestManager extends BukkitRunnable {
         // Verify that the container is actually named [Disposal].
         Nameable n = (Nameable) chest.getBlock().getState();
         if (!n.getCustomName().equals("[Disposal]")) {
-          RemoveChest(chest);
+          removeChest(chest);
           continue;
         }
 
@@ -95,14 +95,16 @@ public class DisposalChestManager extends BukkitRunnable {
         inventory = container.getSnapshotInventory();
 
         inventory.clear();
+
         items = new ItemStack[container.getInventory().getSize()];
         items[items.length / 2] = itemStack;
-        inventory.setStorageContents(items);
 
+        inventory.setStorageContents(items);
+        //Since we used getSnapshotInventory(), we have to update the container.
         container.update(true, false);
       } catch (Exception e) {
         plugin.getLogger().info("Removing a chest because of " + e.getMessage());
-        RemoveChest(chest);
+        removeChest(chest);
       }
     }
   }

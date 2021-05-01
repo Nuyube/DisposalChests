@@ -19,8 +19,8 @@ public class DisposalChests extends JavaPlugin {
     UpdateChecker.init(this, 91132).checkNow();
     // Register our sellxp command and its alias
     Bukkit.getPluginManager().registerEvents(new DisposalChestDiscoveryEventHandler(this), this);
-    DisposalChestManager.Init(this);
-    DeletionTask =   DisposalChestManager.getInstance().runTaskTimer(this, 20, 20);
+    DisposalChestManager.init(this);
+    DeletionTask = DisposalChestManager.getInstance().runTaskTimer(this, 20, 20);
   }
 
   BukkitTask DeletionTask = null;
