@@ -8,6 +8,7 @@ import org.bukkit.Nameable;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +21,8 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -57,6 +60,28 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
         if (isWarningStack) {
             event.setCancelled(true);
+            return;
+        }
+
+        Inventory inventory;
+        InventoryHolder holder;
+
+        inventory = event.getSource();
+        holder = inventory.getHolder();
+
+        if(holder instanceof Hopper) {
+            Hopper hopper;
+            hopper = (Hopper)holder;
+
+            String name;
+            name = hopper.getCustomName();
+
+            
+            if(name != null && name.equals("[Disposal]")) {
+                event.setCancelled(true);
+                return;
+            }
+
         }
     }
 
@@ -130,13 +155,9 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
             container = (Container) block.getState();
             name = container.getCustomName();
-
-            // If the item isn't named, we don't care.
-            if (name == null) {
-                return;
-            }
+ 
             // If it IS named, and is named [Disposal], we need to check for permissions
-            if (name.equals("[Disposal]")) {
+            if (name != null && name.equals("[Disposal]")) {
                 try {
                     DisposalChestManager manager;
 
@@ -208,7 +229,7 @@ class DisposalChestDiscoveryEventHandler implements Listener {
                 nameable = (Nameable) blockState;
                 name = nameable.getCustomName();
 
-                if (name.equals("[Disposal]")) {
+                if (name != null && name.equals("[Disposal]")) {
                     try {
                         DisposalChest disposalChest;
                         Block block;
