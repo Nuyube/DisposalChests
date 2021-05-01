@@ -1,12 +1,7 @@
 package xyz.nuyube.minecraft.disposalchests;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import org.bukkit.Chunk;
 import org.bukkit.Nameable;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
@@ -17,57 +12,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-class ChunkLocation {
-
-  int x;
-  int z;
-  World world;
-  LocalDateTime unloaded;
-
-  public ChunkLocation(Chunk c) {
-    x = c.getX();
-    z = c.getZ();
-    world = c.getWorld();
-    unloaded = LocalDateTime.now();
-  }
-}
-
-class RecentlyLoadedChunks {
-
-static   ArrayList<ChunkLocation> chunky = new ArrayList<ChunkLocation>();
-
-  public static void Add(Chunk c) {
-    ChunkLocation location = new ChunkLocation(c);
-    chunky.add(location);
-  }
-
-  public static boolean Contains(Chunk c) {
-     Tick();
-    for(ChunkLocation l : chunky) {
-      if(l.x == c.getX() && l.z == c.getZ() && l.world == c.getWorld()) return true;
-    }
-    return false;
-  }
-
-  public static void Tick() {
-    for (int i = 0; i < chunky.size(); i++) {
-      if (chunky.get(i).unloaded.plusSeconds(4).isBefore(LocalDateTime.now())) {
-        chunky.remove(i);
-        i--;
-      }
-    }
-  }
-}
-
-class DisposalChestDeletionEventHandler extends BukkitRunnable {
-
-  @Override
-  public void run() {
-    DisposalChestManager.Tick();
-  }
-}
 
 class DisposalChestDiscoveryEventHandler implements Listener {
 
@@ -94,9 +38,9 @@ class DisposalChestDiscoveryEventHandler implements Listener {
       if (c.getCustomName().equals("[Disposal]")) {
         try {
           plugin.getLogger().info("Modifying chests due to BlockHandler.");
-          if (!Break) DisposalChestManager.AddChest(
+          if (!Break) DisposalChestManager.getInstance().AddChest(
             new DisposalChest(b)
-          ); else DisposalChestManager.RemoveChest(new DisposalChest(b));
+          ); else DisposalChestManager.getInstance().RemoveChest(new DisposalChest(b));
         } catch (Exception e) {
           plugin.getLogger().severe(e.getMessage());
         }
@@ -121,8 +65,8 @@ class DisposalChestDiscoveryEventHandler implements Listener {
           try {
             DisposalChest dc = new DisposalChest(BS.getBlock());
             plugin.getLogger().info("Modifying chests due to ChunkHandler.");
-            if (!Unload) DisposalChestManager.AddChest(dc); else {
-              DisposalChestManager.RemoveChest(dc);
+            if (!Unload) DisposalChestManager.getInstance().AddChest(dc); else {
+              DisposalChestManager.getInstance().RemoveChest(dc);
             }
           } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -142,7 +86,7 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
   @EventHandler
   public void onChunkUnload(ChunkUnloadEvent event) {
-    DisposalChestManager.RemoveChestsFromChunk(event.getChunk());
+    DisposalChestManager.getInstance().RemoveChestsFromChunk(event.getChunk());
     RecentlyLoadedChunks.Add(event.getChunk());
   }
 }
