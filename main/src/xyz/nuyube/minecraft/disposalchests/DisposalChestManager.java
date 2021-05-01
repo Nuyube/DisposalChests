@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Nameable;
-import org.bukkit.block.Container; 
+import org.bukkit.block.Container;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 
 public class DisposalChestManager extends BukkitRunnable {
@@ -32,6 +33,20 @@ public class DisposalChestManager extends BukkitRunnable {
 
   static void init(Plugin p) {
     plugin = p;
+  }
+
+  public boolean hasChestAtLocation(Location l) {
+    for (DisposalChest chest : Chests) {
+      DisposalChestLocation chestLocation;
+
+      chestLocation = chest.getLocation();
+
+      if (chestLocation.getLocation() == l) {
+        return true;
+      }
+
+    }
+    return false;
   }
 
   public void addChest(DisposalChest chest) {
@@ -58,8 +73,8 @@ public class DisposalChestManager extends BukkitRunnable {
     Chests.remove(chest);
   }
 
-  public void run() { 
-    //Create our warning item    
+  public void run() {
+    // Create our warning item
     ItemStack itemStack;
     ItemMeta itemMeta;
     List<String> lore;
@@ -75,7 +90,7 @@ public class DisposalChestManager extends BukkitRunnable {
     itemMeta.setLore(lore);
 
     itemStack.setItemMeta(itemMeta);
-    
+
     // Destroy all items in Disposal Chests.
     for (int i = 0; i < Chests.size(); i++) {
       DisposalChest chest = Chests.get(i);
@@ -100,7 +115,7 @@ public class DisposalChestManager extends BukkitRunnable {
         items[items.length / 2] = itemStack;
 
         inventory.setStorageContents(items);
-        //Since we used getSnapshotInventory(), we have to update the container.
+        // Since we used getSnapshotInventory(), we have to update the container.
         container.update(true, false);
       } catch (Exception e) {
         plugin.getLogger().info("Removing a chest because of " + e.getMessage());

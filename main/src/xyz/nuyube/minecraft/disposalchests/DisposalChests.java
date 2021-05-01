@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.jeff_media.updatechecker.UpdateChecker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
