@@ -1,5 +1,7 @@
 package xyz.nuyube.minecraft.disposalchests;
 
+import java.util.List;
+
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.Nameable;
@@ -10,7 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -18,6 +23,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import org.bukkit.entity.Item;
 
 class DisposalChestDiscoveryEventHandler implements Listener {
 
@@ -30,21 +37,78 @@ class DisposalChestDiscoveryEventHandler implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         ItemStack item;
-        ItemMeta meta;
+        boolean isWarningStack;
 
         item = event.getCurrentItem();
+        isWarningStack = itemStackIsWarningStack(item);
+
+        if (isWarningStack) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryMoveItem(InventoryMoveItemEvent event) {
+        ItemStack item;
+        boolean isWarningStack;
+
+        item = event.getItem();
+        isWarningStack = itemStackIsWarningStack(item);
+
+        if (isWarningStack) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockDropItem(BlockDropItemEvent event) {
+        List<Item> droppedItems;
+
+        droppedItems = event.getItems();
+
+        for (int i = 0; i < droppedItems.size(); i++) {
+            Item item;
+            ItemStack itemStack;
+
+            item = droppedItems.get(i);
+            itemStack = item.getItemStack();
+
+            if (itemStackIsWarningStack(itemStack)) {
+                droppedItems.remove(item);
+                i--;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockDispense(BlockDispenseEvent event) {
+        ItemStack item;
+        boolean isWarningStack;
+
+        item = event.getItem();
+        isWarningStack = itemStackIsWarningStack(item);
+
+        if (isWarningStack) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean itemStackIsWarningStack(ItemStack item) {
+        ItemMeta meta;
+
         meta = item.getItemMeta();
 
-        //Verify that this is the item we usually use
+        // Verify that this is the item we usually use
         if (item.getType() != Material.RED_STAINED_GLASS_PANE)
-            return;
+            return false;
         else if (item.getAmount() != 1)
-            return;
+            return false;
         else if (!meta.hasLore())
-            return;
+            return false;
         else if (!meta.hasDisplayName())
-            return;
-        else event.setCancelled(true);
+            return false;
+        else
+            return true;
     }
 
     @EventHandler
