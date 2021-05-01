@@ -16,6 +16,10 @@
   </properties>
   <repositories>
     <repository>
+        <id>jeff-media-gbr</id>
+        <url>https://repo.jeff-media.de/maven2/</url>
+    </repository>
+    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
@@ -24,7 +28,7 @@
     <dependency>
       <groupId>de.jeff_media</groupId>
       <artifactId>SpigotUpdateChecker</artifactId>
-      <version>1.0.0</version> <!-- Check on GitHub for the latest version -->
+      <version>1.2.0</version> <!-- Check on GitHub for the latest version -->
       <scope>compile</scope>
     </dependency>
     <dependency>
