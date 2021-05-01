@@ -1,6 +1,7 @@
 package xyz.nuyube.minecraft.disposalchests;
 
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.Nameable;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -9,10 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 class DisposalChestDiscoveryEventHandler implements Listener {
@@ -22,6 +26,26 @@ class DisposalChestDiscoveryEventHandler implements Listener {
     }
 
     static Plugin plugin;
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        ItemStack item;
+        ItemMeta meta;
+
+        item = event.getCurrentItem();
+        meta = item.getItemMeta();
+
+        //Verify that this is the item we usually use
+        if (item.getType() != Material.RED_STAINED_GLASS_PANE)
+            return;
+        else if (item.getAmount() != 1)
+            return;
+        else if (!meta.hasLore())
+            return;
+        else if (!meta.hasDisplayName())
+            return;
+        else event.setCancelled(true);
+    }
 
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent event) {
@@ -150,11 +174,11 @@ class DisposalChestDiscoveryEventHandler implements Listener {
         Chunk chunk;
 
         chunk = event.getChunk();
-        
+
         if (!RecentlyLoadedChunks.Contains(chunk)) {
             chunkHandler(chunk, false);
         }
-}
+    }
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
@@ -162,7 +186,7 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
         chunk = event.getChunk();
 
-        DisposalChestManager.getInstance().removeChestsFromChunk(chunk);       
+        DisposalChestManager.getInstance().removeChestsFromChunk(chunk);
         RecentlyLoadedChunks.Add(chunk);
     }
 }
