@@ -29,23 +29,20 @@ public class DisposalChestManager {
       .info("Adding new Disposal Chest at " + chest.getLocation().toString());
     Chests.add(chest);
   }
-public static void RemoveChestsFromChunk(Chunk c) {
-  
+public static void RemoveChestsFromChunk(Chunk c) { 
   int X = c.getX();
   int Z = c.getZ();
   //plugin.getLogger().info("Running chunk unload task on CHUNK=("+X+","+Z+")");
   for(int i = 0; i < Chests.size(); i++) {
     DisposalChest dc = Chests.get(i);
-    Location L = dc.getLocation();
+    DisposalChestLocation L = dc.getLocation();
     int oX = X * 16;
     int oZ = Z * 16;
-    if(L.getX() >= oX && L.getX() <= oX + 16.0
-      && L.getZ() >= oZ && L.getZ() <= oZ + 16.0) {
-        plugin.getLogger().info("Removing chest at CHUNK=("+X+","+Z+")");
+    if(L.x >= oX && L.x <= oX + 16.0
+      && L.z >= oZ && L.z <= oZ + 16.0) { 
         RemoveChest(dc);
       }
-  }
-  
+  } 
 }
   public static void RemoveChest(DisposalChest chest) {
     plugin
@@ -59,10 +56,6 @@ public static void RemoveChestsFromChunk(Chunk c) {
     //Destroy all items in Disposal Chests.
     for(int i =0; i < Chests.size(); i++) {
       DisposalChest chest = Chests.get(i);
-      if(!chest.getLocation().getChunk().isLoaded()) {
-        plugin.getLogger().info("Unloading chest because chunk is not loaded.");
-        RemoveChest(chest);
-      }
       try {
         //Verify that the container is actually named [Disposal].
         Nameable n = (Nameable) chest.getBlock().getState();

@@ -1,12 +1,11 @@
 package xyz.nuyube.minecraft.disposalchests;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 
 class DisposalChest {
-
-  Location location;
+  DisposalChestLocation location;
+  //Location spigotLocation;
   Block block;
   Container container;
 
@@ -16,13 +15,14 @@ class DisposalChest {
     } else {
       container = (Container) b.getState();
       block = b;
-      location = b.getLocation();
+      location = new DisposalChestLocation(b.getLocation());
+      //spigotLocation = b.getLocation();
     }
   }
 
-  public Location getLocation() {
+  public DisposalChestLocation getLocation() {
     return location;
-  }
+  } 
 
   public Block getBlock() {
     return block;

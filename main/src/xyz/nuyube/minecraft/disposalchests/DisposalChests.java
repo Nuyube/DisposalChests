@@ -3,6 +3,9 @@ package xyz.nuyube.minecraft.disposalchests;
 import java.util.logging.Logger;
 
 import org.bukkit.scheduler.BukkitTask;
+
+import de.jeff_media.updatechecker.UpdateChecker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,22 +20,7 @@ public class DisposalChests extends JavaPlugin {
     //Start our plugin logger
     PluginLogger = getLogger();
     //Check for updates
-    new UpdateChecker(this, 91132)
-      .getVersion(
-          version -> {
-            if (
-              this.getDescription().getVersion().equalsIgnoreCase(version)
-            ) {} else {
-              Bukkit
-                .getConsoleSender()
-                .sendMessage(
-                  ChatColor.GREEN +
-                  "[Nuyube's DisposalChests] There is a new update available!"
-                );
-            }
-          }
-        ); 
-
+    UpdateChecker.init(this, 91031).checkNow();  
     //Register our sellxp command and its alias 
     Bukkit.getPluginManager().registerEvents(new DisposalChestDiscoveryEventHandler(this), this);
     DisposalChestManager.Init(this);
