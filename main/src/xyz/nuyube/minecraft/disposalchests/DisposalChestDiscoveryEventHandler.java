@@ -5,7 +5,7 @@ import org.bukkit.Nameable;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
-import org.bukkit.entity.Player; 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -90,11 +90,11 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
                             manager.addChest(dChest);
                         }
-                    } 
+                    }
                 } catch (Exception e) {
                     plugin.getLogger().severe(e.getMessage());
                 }
-            } 
+            }
         }
     }
 
@@ -104,21 +104,39 @@ class DisposalChestDiscoveryEventHandler implements Listener {
     }
 
     private void chunkHandler(Chunk c, boolean Unload) {
-        BlockState[] x = c.getTileEntities();
-        for (BlockState BS : x) {
-            if (BS instanceof Container && BS instanceof Nameable) {
-                Nameable n = (Nameable) BS;
-                if (n.getCustomName() == null)
-                    continue;
-                if (n.getCustomName().equals("[Disposal]")) {
+
+        BlockState[] chunkTileEntities;
+
+        chunkTileEntities = c.getTileEntities();
+
+        for (BlockState blockState : chunkTileEntities) {
+
+            // If the blockstate is a nameable container
+            if (blockState instanceof Container && blockState instanceof Nameable) {
+
+                String name;
+                Nameable nameable;
+
+                nameable = (Nameable) blockState;
+                name = nameable.getCustomName();
+
+                if (name.equals("[Disposal]")) {
                     try {
-                        DisposalChest dc = new DisposalChest(BS.getBlock());
-                        plugin.getLogger().info("Modifying chests due to ChunkHandler.");
-                        if (!Unload)
-                            DisposalChestManager.getInstance().addChest(dc);
-                        else {
-                            DisposalChestManager.getInstance().removeChest(dc);
-                        }
+                        DisposalChest disposalChest;
+                        Block block;
+
+                        block = blockState.getBlock();
+                        disposalChest = new DisposalChest(block);
+
+                        DisposalChestManager manager;
+
+                        manager = DisposalChestManager.getInstance();
+
+                        if (Unload)
+                            manager.removeChest(disposalChest);
+                        else
+                            manager.addChest(disposalChest);
+
                     } catch (Exception e) {
                         plugin.getLogger().severe(e.getMessage());
                     }
@@ -129,15 +147,22 @@ class DisposalChestDiscoveryEventHandler implements Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (RecentlyLoadedChunks.Contains(event.getChunk())) {
-            return;
+        Chunk chunk;
+
+        chunk = event.getChunk();
+        
+        if (!RecentlyLoadedChunks.Contains(chunk)) {
+            chunkHandler(chunk, false);
         }
-        chunkHandler(event.getChunk(), false);
-    }
+}
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        DisposalChestManager.getInstance().removeChestsFromChunk(event.getChunk());
-        RecentlyLoadedChunks.Add(event.getChunk());
+        Chunk chunk;
+
+        chunk = event.getChunk();
+
+        DisposalChestManager.getInstance().removeChestsFromChunk(chunk);       
+        RecentlyLoadedChunks.Add(chunk);
     }
 }
