@@ -22,8 +22,8 @@ class WarningItemRemovalDenialEventHandler implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         ItemStack item;
         boolean isWarningStack;
-
         item = event.getCurrentItem();
+        if(item == null) return;
         isWarningStack = itemStackIsWarningStack(item);
 
         if (isWarningStack) {
@@ -101,9 +101,9 @@ class WarningItemRemovalDenialEventHandler implements Listener {
 
     private boolean itemStackIsWarningStack(ItemStack item) {
         ItemMeta meta;
-
+        if(item == null) return false;
         meta = item.getItemMeta();
-
+        if(meta == null) return false;
         // Verify that this is the item we usually use
         if (item.getType() != Material.RED_STAINED_GLASS_PANE)
             return false;
